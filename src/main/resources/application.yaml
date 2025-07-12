@@ -1,0 +1,12 @@
+ktor:
+  application:
+    modules:
+      - com.sdhs.ApplicationKt.module
+  deployment:
+    port: 8080
+
+database:
+  driver: "com.mysql.cj.jdbc.Driver"
+  url: "jdbc:mysql://127.0.0.1:3306/wattwatch"
+  username: "root"
+  password: "yunstar518"
