@@ -6,12 +6,14 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient
 import com.sdhs.models.LightStatus
 import com.sdhs.models.MqttResponseModel
 import com.sdhs.models.TemperatureStatus
+import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.CORS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -32,6 +34,18 @@ fun Application.module() {
         json()
     }
 
+    install(CORS) {
+        anyHost()
+
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
+
+        allowHeaders { true }
+    }
     DBFactory.init()
 
     subscribeMqttSensorLux(this)
