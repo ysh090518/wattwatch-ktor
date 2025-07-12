@@ -1,12 +1,9 @@
 package com.sdhs.route
 
 import com.sdhs.models.LightStatus
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
-import mu.KotlinLogging
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -17,7 +14,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 @Serializable
-private data class Response(val isOn: Boolean, val classroom: String, val timestamp: String)
+private data class LightResponse(val isOn: Boolean, val classroom: String, val timestamp: String)
 
 fun Route.light() {
     val (start, end) = getTodayRange()
@@ -83,14 +80,14 @@ fun getTodayRange(): Pair<Instant, Instant> {
     return startOfDay to endOfDay
 }
 
-private fun getBetween(start: Instant, end: Instant, classroom: String): List<Response> {
+private fun getBetween(start: Instant, end: Instant, classroom: String): List<LightResponse> {
     return transaction {
         LightStatus.select {
             (LightStatus.timestamp greaterEq start) and (LightStatus.timestamp less end) and (LightStatus.classroom like "%$classroom%")
         }
             .orderBy(LightStatus.timestamp, SortOrder.ASC)
             .map { row ->
-                Response(
+                LightResponse(
                     isOn = row[LightStatus.isOn],
                     classroom = row[LightStatus.classroom],
                     timestamp = row[LightStatus.timestamp].toString(),
@@ -100,16 +97,16 @@ private fun getBetween(start: Instant, end: Instant, classroom: String): List<Re
 }
 
 @Serializable
-data class LightTotalTimeModel(
+data class TotalTimeModel(
     val seconds: Long,
     val minutes: Long,
 )
 
 private fun calculateDurations(
-    events: List<Response>,
-): LightTotalTimeModel {
+    events: List<LightResponse>,
+): TotalTimeModel {
 
-    if (events.size <= 1) return LightTotalTimeModel(0, 0)
+    if (events.size <= 1) return TotalTimeModel(0, 0)
 
     var totalOnTime = Duration.ZERO
 
@@ -122,5 +119,5 @@ private fun calculateDurations(
         }
     }
 
-    return LightTotalTimeModel(totalOnTime.seconds, totalOnTime.toMinutes())
+    return TotalTimeModel(totalOnTime.seconds, totalOnTime.toMinutes())
 }

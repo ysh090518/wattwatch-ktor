@@ -1,5 +1,6 @@
 package com.sdhs.models
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Clock

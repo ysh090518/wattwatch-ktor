@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.client.negotiation)
     implementation(libs.ktor.serialization)
     implementation(libs.kotlin.loggin)
