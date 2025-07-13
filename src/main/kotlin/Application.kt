@@ -45,6 +45,10 @@ fun Application.module() {
         allowMethod(HttpMethod.Patch)
 
         allowHeaders { true }
+
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+
     }
     DBFactory.init()
 
